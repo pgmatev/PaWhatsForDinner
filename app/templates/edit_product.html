@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- The above 4 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+
+    <!-- Title -->
+    <title>Ma what's for dinner?</title>
+
+    <!-- Favicon -->
+    <link rel="icon" href="../static/img/core-img/favicon.ico">
+
+    <!-- Core Stylesheet -->
+    <!-- <link rel="stylesheet" href="style.css"> -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+
+</head>
+
+<body>
+    <!-- Preloader -->
+    <div id="preloader">
+        <i class="circle-preloader"></i>
+        <img src="../static/img/core-img/salad.png" alt="">
+    </div>
+
+
+    <!-- ##### Header Area Start ##### -->
+    <header class="header-area">
+
+        <!-- Navbar Area -->
+        <div class="delicious-main-menu">
+            <div class="classy-nav-container breakpoint-off">
+                <div class="container">
+                    <!-- Menu -->
+                    <nav class="classy-navbar justify-content-between" id="deliciousNav">
+
+                        <!-- Logo -->
+                        <a class="nav-brand logo-ma" href="/"><img src="../static/img/core-img/logo.png" alt=""></a>
+
+
+                        <!-- Menu -->
+                        <div class="classy-menu">
+
+                            <!-- close btn -->
+                            <div class="classycloseIcon">
+                                <div class="cross-wrap"><span class="top"></span><span class="bottom"></span></div>
+                            </div>
+
+                            <!-- Nav Start -->
+                            <div class="classynav">
+                                <ul>
+                                    <li><a href="/">Home</a></li>
+                                    <li><a href="/recipes">Recipes</a></li>
+                                    <li><a href="/products">Products</a></li>
+                                    {% if not current_user.is_authenticated %}
+                                        <li><a href="/login">Login</a></li>
+                                        <li><a href="/register">Register</a></li>
+                                    {% else %}
+                                        <li><a href="/create_recipe">Create</a></li>
+                                        <li><a href="/create_product">Create Product</a></li>
+                                        <li><a href="/profile">Profile</a></li>
+                                        <li><a href="/logout">Logout</a></li>
+                                    {% endif %}
+                                </ul>
+                            </div>
+                            <!-- Nav End -->
+                        </div>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- ##### Header Area End ##### -->
+
+
+    <div class="card">
+        <div class="notification-danger notification-box">
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    {{ messages[0] }}
+                {% endif %}
+            {% endwith %}
+        </div>
+
+        <header >
+            <h1 class="card-title">Update Product</h1>
+        </header>
+
+        <form action = "/products/{{ product.id }}/edit" method ="post">
+            <div class="form-line">
+                <input type="text" name="name" class="form-input" placeholder="Name" value="{{ product.name }}">
+            </div>
+
+            <div class="form-line">
+                <input type="text" name="unit" class="form-input" placeholder="Unit" value="{{ product.unit }}">
+            </div>
+
+            <div class="button">
+                <button class="btn delicious-btn" type="submit">Update product</button>
+            </div>
+        </form>
+
+    </div>
+
+
+
+
+
+    {% block javascript %}
+        <script src="{{ url_for('static', filename='js/jquery/jquery-2.2.4.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/bootstrap/popper.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/bootstrap/bootstrap.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/plugins/plugins.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/active.js') }}"></script>
+    {% endblock %}
+</body>
+
+</html>

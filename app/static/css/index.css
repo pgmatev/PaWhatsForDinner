@@ -1,0 +1,99 @@
+.card { 
+    width: 100%; 
+    max-width: 400px;
+    margin: 50px auto 0;
+    background: white;
+    border: 1px solid #40ba37;
+    padding: 50px;
+    box-shadow: 0 30px 60px -20px rgba(0, 0, 0, .6);
+}
+  
+.card p{
+    margin-bottom: 0;
+}
+  
+.card-title{
+    margin: 0 auto 20px;
+    text-align: center;
+    line-height: 1.3; 
+    font-weight: 100;
+}
+  
+.card-subtitle{
+    margin: 0;
+}
+  
+.card-content {
+    margin-top: 20px;
+}
+  
+.form-line {
+    text-align: center;
+    margin: 10px 0;
+}
+  
+.form-input {
+    height: 30px;
+    width: 100%;
+    max-width: 350px;
+    border-radius: 2rem;
+    outline: none;
+    font-size: 16px;
+    padding-left: 15px;
+    border-color: #40ba37;
+    border-style: solid;
+}
+  
+.form-input:hover {
+    box-shadow: 0 0 4px rgba(0, 0, 0, .6);
+}
+  
+.form-input:focus {
+    box-shadow: 0 0 4px rgba(25, 73, 22, 1);
+}
+  
+.button {
+    text-align: center;
+    margin-top: 20px;
+}
+  
+.signup {
+    height: 50px;
+    width: 100%;
+    max-width: 180px;
+    background-color: #40ba37;
+    border: none;
+    font-size: 20px;
+    border-radius: 2rem;
+    outline-style: none;
+    color: #fff;
+}
+  
+.signup:hover {
+    box-shadow: 0 0 4px rgba(0, 0, 0, .6);
+}
+
+.notification-box {
+    width: 100%;
+    max-width: 350px;
+    text-align: center;
+    background: red;
+    border-radius: 2rem;
+    margin: auto;
+    margin-bottom: 20px;
+    font-size: 20px;
+}
+
+.remember {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.user {
+    content: center;
+    margin: auto;
+}
+
+.hi {
+    text-align: center;
+}

@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- The above 4 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+
+    <!-- Title -->
+    <title>Ma what's for dinner?</title>
+
+    <!-- Favicon -->
+    <link rel="icon" href="../static/img/core-img/favicon.ico">
+
+    <!-- Core Stylesheet -->
+    <!-- <link rel="stylesheet" href="style.css"> -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+<body>
+    <!-- Preloader -->
+    <div id="preloader">
+        <i class="circle-preloader"></i>
+        <img src="../static/img/core-img/salad.png" alt="">
+    </div>
+
+
+    <!-- ##### Header Area Start ##### -->
+    <header class="header-area">
+
+        <!-- Navbar Area -->
+        <div class="delicious-main-menu">
+            <div class="classy-nav-container breakpoint-off">
+                <div class="container">
+                    <!-- Menu -->
+                    <nav class="classy-navbar justify-content-between" id="deliciousNav">
+
+                        <!-- Logo -->
+                        <a class="nav-brand logo-ma" href="/"><img src="../static/img/core-img/logo.png" alt=""></a>
+
+
+                        <!-- Menu -->
+                        <div class="classy-menu">
+
+                            <!-- close btn -->
+                            <div class="classycloseIcon">
+                                <div class="cross-wrap"><span class="top"></span><span class="bottom"></span></div>
+                            </div>
+
+                            <!-- Nav Start -->
+                            <div class="classynav">
+                                <ul>
+                                    <li class="active"><a href="/">Home</a></li>
+                                    <li><a href="/recipes">Recipes</a></li>
+                                    <li><a href="/products">Products</a></li>
+                                    {% if not current_user.is_authenticated %}
+                                        <li><a href="/login">Login</a></li>
+                                        <li><a href="/register">Register</a></li>
+                                    {% else %}
+                                        <li><a href="/create_recipe">Create</a></li>
+                                        <li><a href="/create_product">Create Product</a></li>
+                                        <li><a href="/profile">Profile</a></li>
+                                        <li><a href="/logout">Logout</a></li>
+                                    {% endif %}
+                                </ul>
+                            </div>
+                            <!-- Nav End -->
+                        </div>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- ##### Header Area End ##### -->
+
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {{ messages[0] }}
+        {% endif %}
+    {% endwith %}
+
+    <!-- ##### Hero Area Start ##### -->
+    <section class="hero-area">
+        <div class="hero-slides owl-carousel">
+            <!-- Single Hero Slide -->
+            <div class="single-hero-slide bg-img" style="background-image: url(../static/img/bg-img/bg1.jpg);">
+                <div class="container h-100">
+                    <div class="row h-100 align-items-center">
+                        <div class="col-12 col-md-9 col-lg-7 col-xl-6">
+                            <div class="hero-slides-content" data-animation="fadeInUp" data-delay="100ms">
+                                <h2 data-animation="fadeInUp" data-delay="100ms">Welcome</h2>
+                                <p data-animation="fadeInUp" data-delay="300ms">We present you the latest project of team Gesko - Ma what's for dinner? In the web app you can check what you have in your fridge back home, what recipes you are able to cook with the products that you have and also discover new recipes.</p>
+                                <!--<a href="#" class="btn delicious-btn" data-animation="fadeInUp" data-delay="1000ms">See Receipe</a>-->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Single Hero Slide -->
+            <div class="single-hero-slide bg-img" style="background-image: url(../static/img/bg-img/bg6.jpg);">
+                <div class="container h-100">
+                    <div class="row h-100 align-items-center">
+                        <div class="col-12 col-md-9 col-lg-7 col-xl-6">
+                            <div class="hero-slides-content" data-animation="fadeInUp" data-delay="100ms">
+                                <h2 data-animation="fadeInUp" data-delay="100ms">Recipes</h2>
+                                <p data-animation="fadeInUp" data-delay="300ms">Here you can create recipes, share recipes with your friends, update them, rate them, see if you can cook them with current products and many more!</p>
+                                <a href="/recipes" class="btn delicious-btn" data-animation="fadeInUp" data-delay="1000ms">See Receipes</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Single Hero Slide -->
+            <div class="single-hero-slide bg-img" style="background-image: url(../static/img/bg-img/bg7.jpg);">
+                <div class="container h-100">
+                    <div class="row h-100 align-items-center">
+                        <div class="col-12 col-md-9 col-lg-7 col-xl-6">
+                            <div class="hero-slides-content" data-animation="fadeInUp" data-delay="100ms">
+                                <h2 data-animation="fadeInUp" data-delay="100ms">About Us</h2>
+                                <p data-animation="fadeInUp" data-delay="100ms">We are team Gesko. 11th grade student is ELSYS. The following project is the result of or course works in the school, in the subbjects of "Technology of programming" and "Architecture of computer systems"</p>
+                                <!--<a href="#" class="btn delicious-btn" data-animation="fadeInUp" data-delay="1000ms">See Receipe</a>-->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- ##### Hero Area End ##### -->
+
+    <!-- ##### Top Catagory Area Start ##### -->
+    <section class="top-catagory-area section-padding-80-0">
+        <div class="container">
+            <div class="row">
+                <!-- Top Catagory Area -->
+                <div class="col-12 col-lg-6">
+                    <div class="single-top-catagory">
+                        <img src="../static/img/bg-img/elsys.jpg" alt="">
+                        <!-- Content -->
+                        <div class="top-cta-content">
+                            <h3>ELSYS</h3>
+                            <h6>Find out more about our school</h6>
+                            <a href="https://elsys-bg.org/" class="btn delicious-btn">Find Out</a>
+                        </div>
+                    </div>
+                </div>
+                <!-- Top Catagory Area -->
+                <div class="col-12 col-lg-6">
+                    <div class="single-top-catagory">
+                        <img src="../static/img/bg-img/code.jpg" alt="">
+                        <!-- Content -->
+                        <div class="top-cta-content">
+                            <h3>Tech Stuff</h3>
+                            <h6>If you want to know more about the other side</h6>
+                            <a href="https://github.com/joro2404/Ma-whats-for-dinner-" class="btn delicious-btn">See More</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ##### Best Receipe Area Start ##### -->
+    <section class="best-receipe-area">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <div class="section-heading">
+                        <h3>The best Recipes</h3>
+                    </div>
+                </div>
+            </div> 
+        </div>
+    </section>
+
+               
+    <!-- ##### Best Receipe Area End ##### -->
+
+    {% block javascript %}
+        <script src="{{ url_for('static', filename='js/jquery/jquery-2.2.4.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/bootstrap/popper.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/bootstrap/bootstrap.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/plugins/plugins.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/active.js') }}"></script>
+    {% endblock %}
+</body>
+
+</html>
