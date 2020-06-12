@@ -23,6 +23,31 @@ CREATE TABLE IF NOT EXISTS products
     )
 ''')
 
+conn.cursor().execute('''
+CREATE TABLE IF NOT EXISTS recipes
+    (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL,
+        user_id TEXT NOT NULL,
+        description TEXT NOT NULL,
+        rating DOUBLE(1, 1) NOT NULL,
+        time INTEGER NOT NULL,
+        picture TEXT
+    )
+''')
+
+conn.cursor().execute('''
+CREATE TABLE IF NOT EXISTS ingredients
+    (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        recipe_id INTEGER NOT NULL,
+        product_id INTEGER NOT NULL,
+        quantity DOUBLE(1, 3) NOT NULL,
+        FOREIGN KEY (recipe_id) REFERENCES recipes(id),
+        FOREIGN KEY (product_id) REFERENCES products(id)
+    )
+''')
+
 conn.commit()
 
 class DB:
