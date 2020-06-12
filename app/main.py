@@ -7,9 +7,10 @@ from .user import User
 from .product import Product
 from .recipes import Recipe
 from .ingredient import Ingredient
+from .database import DB
 
 main = Blueprint('main', __name__)
-upload_folder = "/home/petar-gabriel/Desktop/DataBase/PaWhatsForDinner/app/static/img/uploads"
+upload_folder = "/home/vesko/Desktop/subd/PaWhatsForDinner/app/static/img/uploads"
 
 
 @main.route('/')
@@ -156,23 +157,31 @@ def edit_recipe(id):
         recipe.description = request.form['description']
         recipe.time = request.form['time']
         recipe.picture = os.path.join("/static/img/uploads", filename)
-        recipe.save()
 
-        Ingredient.delete_by_recipe(recipe.id)
+        with DB() as db:
+            # recipe.save()
+            values = (recipe.name, recipe.description, recipe.time, recipe.picture, recipe.id)
+            db.execute('UPDATE recipes SET name = ?, description = ?, time = ?, picture = ? WHERE id = ?', values)
 
-        ingredients = [
-            None,
-            recipe.id,
-            None,
-            None
-        ]
+            # Ingredient.delete_by_recipe(recipe.id)
+            db.execute('DELETE FROM ingredients WHERE recipe_id = ?', (recipe.id,))
 
-        i = 1
-        while(request.form.get('id_of_product' + str(i)) is not None):
-            ingredients[2] = request.form.get('id_of_product' + str(i))
-            ingredients[3] = request.form.get('quantity_of_product' + str(i))
-            Ingredient(*ingredients).create()
-            i += 1
+
+            ingredients = [
+                None,
+                recipe.id,
+                None,
+                None
+            ]
+
+            i = 1
+            while(request.form.get('id_of_product' + str(i)) is not None):
+                ingredients[2] = request.form.get('id_of_product' + str(i))
+                ingredients[3] = request.form.get('quantity_of_product' + str(i))
+                # Ingredient(*ingredients).create()
+                values = (recipe.id, ingredients[2], ingredients[3])
+                db.execute('INSERT INTO ingredients(recipe_id, product_id, quantity) VALUES (?, ?, ?)', values)
+                i += 1
         
         return redirect(url_for('main.show_recipe', id=recipe.id))
 
