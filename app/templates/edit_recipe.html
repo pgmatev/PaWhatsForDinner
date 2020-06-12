@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Recipe</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/create_recipe.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <link rel="icon" href="{{ url_for('static', filename='img/core-img/favicon.ico') }}">
+    <script type="text/javascript">
+        $(document).ready(function() {
+            var max_fields = 10;
+            var wrapper = $(".container_fields");
+            var add_button = $(".add_form_field");
+    
+            var x = {{ number_of_ingredients|tojson }};
+            $(add_button).click(function(e) {
+                e.preventDefault();
+                if (x < max_fields) {
+                    x++;
+                    $(wrapper).append('\
+                    <div class="row">\
+                        <div class="col-25">\
+                        <label>Product ' + x + '</label>\
+                        <br>\
+                        <a href="#" class="delete">Remove</a>\
+                        </div>\
+                        <div class="col-75">\
+                        <select name="id_of_product' + x + '">\
+                            {% for product in products %}\
+                                <option value="{{ product.id }}">{{ product.name }} ({{ product.unit }})</option>\
+                            {% endfor %}\
+                        </select>\
+                        <input type="number" min="0" step="0.001" name="quantity_of_product' + x + '" placeholder="Quantity!" required>\
+                        </div>\
+                    </div>\
+                    ');
+                } else {
+                    alert('You Reached the limits')
+                }
+            });
+    
+            $(wrapper).on("click", ".delete", function(e) {
+                e.preventDefault();
+                $(this).parent('div').parent('div').remove();
+                x--;
+            })
+        });
+    </script>
+</head>
+<body>
+    <!-- Preloader -->
+    <div id="preloader">
+        <i class="circle-preloader"></i>
+        <img src="{{ url_for('static', filename='img/core-img/salad.png') }}" alt="">
+    </div>
+
+
+    <!-- ##### Header Area Start ##### -->
+    <header class="header-area">
+
+        <!-- Navbar Area -->
+        <div class="delicious-main-menu">
+            <div class="classy-nav-container breakpoint-off">
+                <div class="container">
+                    <!-- Menu -->
+                    <nav class="classy-navbar justify-content-between" id="deliciousNav">
+
+                        <!-- Logo -->
+                        <a class="nav-brand logo-ma" href="/"><img src="{{ url_for('static', filename='img/core-img/logo.png') }}" alt=""></a>
+
+
+                        <!-- Menu -->
+                        <div class="classy-menu">
+
+                            <!-- close btn -->
+                            <div class="classycloseIcon">
+                                <div class="cross-wrap"><span class="top"></span><span class="bottom"></span></div>
+                            </div>
+
+                            <!-- Nav Start -->
+                            <div class="classynav">
+                                <ul>
+                                    <li><a href="/">Home</a></li>
+                                    <li><a href="/recipes">Recipes</a></li>
+                                    {% if not current_user.is_authenticated %}
+                                        <li><a href="/login">Login</a></li>
+                                        <li><a href="/register">Register</a></li>
+                                    {% else %}
+                                        <li><a href="/my_recipes">My Recipes</a></li>
+                                        <li><a href="/create_recipe">Create</a></li>
+                                        <li><a href="/profile">Profile</a></li>
+                                        <li><a href="/logout">Logout</a></li>
+                                    {% endif %}
+                                </ul>
+                            </div>
+                            <!-- Nav End -->
+                        </div>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- ##### Header Area End ##### -->
+
+    <!-- ##### Breadcumb Area Start ##### -->
+    <div class="breadcumb-area bg-img bg-overlay" style="background-image: url({{ url_for('static', filename='img/bg-img/breadcumb3.jpg') }});">
+        <div class="container h-100">
+            <div class="row h-100 align-items-center">
+                <div class="col-12">
+                    <div class="breadcumb-text text-center">
+                        <h2>Edit Recipe</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- ##### Breadcumb Area End ##### -->
+
+    <div class="container-recipe">
+        <form action="/recipes/{{ recipe.id }}/edit" method="POST" enctype="multipart/form-data">
+            <div class="row">
+                <div class="col-25">
+                    <label>Recipe Name</label>
+                </div>
+                <div class="col-75">
+                    <input type="text" name="recipe_name" placeholder="Your recipe name..." value="{{ recipe.name }}">
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-25">
+                    <label>Picture</label>
+                </div>
+                <div class="col-75">
+                    <input type="file" name="file" class="file">
+                </div>
+            </div>
+          
+            <div class="container_fields">
+                {% for i in range(number_of_ingredients) %}
+                    <div class="row">
+                        <div class="col-25">
+                            <label>Product {{ i + 1 }}</label>
+                            <br>
+                            <a href="#" class="delete">Remove</a>
+                        </div>
+                        <div class="col-75">
+                            <select name="id_of_product{{ i + 1 }}">
+                                <option value="{{ ingredients[i].product_id }}">{{ Product.find(ingredients[i].product_id).name }} ({{ Product.find(ingredients[i].product_id).unit }})</option>
+                                {% for product in products %}
+                                    {% if product.id != ingredients[i].product_id %}
+                                        <option value="{{ product.id }}">{{ product.name }} ({{ product.unit }})</option>
+                                    {% endif %}
+                                {% endfor %}
+                            </select>
+                            <input type="number" min="0" step="0.001" name="quantity_of_product{{ i + 1 }}" placeholder="Quantity!" value="{{ ingredients[i].quantity }}" required>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <div class="row right">
+                <button class="add_form_field">Add</button>
+            </div>
+
+            <div class="row">
+                <div class="col-25">
+                    <label>Time to prepare</label>
+                </div>
+                <div class="col-75">
+                    <input type="number" min="0" name="time" placeholder="Time to prepare" value="{{ recipe.time }}">
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-25">
+                    <label>Description of your Recipe</label>
+                </div>
+                <div class="col-75">
+                    <textarea name="description" placeholder="Write something.." style="height:200px">{{ recipe.description }}</textarea>
+                </div>
+            </div>
+            <div class="row right">
+                <input type="submit" value="Update">
+            </div>
+        </form>
+    </div>
+    {% block javascript %}
+        <script src="{{ url_for('static', filename='js/active.js') }}"></script>
+    {% endblock %}
+</body>
+</html>

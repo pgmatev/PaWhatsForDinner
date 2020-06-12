@@ -85,4 +85,50 @@ class Recipe:
     def delete(self):
         with DB() as db:
             db.execute('DELETE FROM recipes WHERE id = ?', (self.id,))
+            return 
+            
+    def is_current_user_rated_this_recipe(self, user_id):
+        with DB() as db:
+            is_rated = db.execute('SELECT rating FROM rating WHERE user_id = ? and recipe_id = ?', (user_id, self.id, )).fetchone()
+            if is_rated == None:
+                return False
+            elif len(is_rated) > 0:
+                return True
+
+
+    def set_rating(self, rate, user_id):
+        if self.is_current_user_rated_this_recipe(user_id):
+            with DB() as db:
+
+                db.execute('UPDATE rating SET rating = ? WHERE user_id = ? and recipe_id = ?', (rate, user_id, self.id, ))
+                return self
+        else:
+            with DB() as db:
+                db.execute('INSERT INTO rating (rating, user_id, recipe_id) VALUES (?, ?, ?)', (rate, user_id, self.id, ))
+                return self
+
+
+    def get_rating(self, user_id):
+        if self.is_current_user_rated_this_recipe(user_id):
+            with DB() as db:
+                rate = db.execute('SELECT rating FROM rating WHERE user_id = ? and recipe_id = ?', (user_id, self.id, )).fetchone()
+                return int(rate[0])
+
+        else:
+            return 0
+
+
+    def get_overall_rating(self):
+
+        with DB() as db:
+            overall_rating =  db.execute('SELECT AVG(rating) FROM rating WHERE recipe_id = ?', (self.id, )).fetchone()
+            if overall_rating == None:
+                return 0
+            else:
+                return overall_rating[0]
+
+
+    def set_overall_rating(self):
+        with DB() as db:
+            db.execute('UPDATE recipes SET rating = ? WHERE id = ?', (self.get_overall_rating() ,  self.id, ))
             return self

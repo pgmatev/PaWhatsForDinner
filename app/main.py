@@ -6,8 +6,11 @@ from werkzeug.security import generate_password_hash
 from .user import User
 from .product import Product
 from .recipes import Recipe
+from .ingredient import Ingredient
 
 main = Blueprint('main', __name__)
+upload_folder = "/home/petar-gabriel/Desktop/DataBase/PaWhatsForDinner/app/static/img/uploads"
+
 
 @main.route('/')
 def index():
@@ -38,6 +41,51 @@ def products():
 def recipes():
     return render_template('recipes.html', recipes=Recipe.all())
 
+@main.route('/create_recipe', methods=['GET', 'POST'])
+@login_required
+def create_recipe():
+    if request.method == 'GET':
+        products = Product.all()
+        return render_template('create_recipe.html', products=products)
+    elif request.method == 'POST':
+        if 'file' not in request.files:
+            return redirect(request.url)
+        file = request.files['file']
+        if file.filename == '':
+            filename = secure_filename("/default.jpeg")
+            filepath = os.path.join("/static/img", filename)
+        if file and Recipe.allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(upload_folder, filename))
+            filepath = os.path.join("/static/img/uploads", filename)
+        values = (
+            None,
+            request.form['recipe_name'],
+            current_user.id,
+            request.form['description'],
+            0.0,
+            request.form['time'],
+            filepath
+        )
+        Recipe(*values).create()
+
+        recipe_id = Recipe.find_last_id()[0]
+
+        ingredients = [
+            None,
+            recipe_id,
+            None,
+            None
+        ]
+        i = 1
+        while(request.form.get('id_of_product' + str(i)) is not None):
+            ingredients[2] = request.form.get('id_of_product' + str(i))
+            ingredients[3] = request.form.get('quantity_of_product' + str(i))
+            Ingredient(*ingredients).create()
+            i += 1
+
+        return redirect(url_for('main.recipes'))
+
 @main.route('/recipes/<int:id>', methods=['GET', 'POST'])
 def show_recipe(id):
     if request.method == 'GET':
@@ -45,7 +93,6 @@ def show_recipe(id):
             recipe = Recipe.find(id)
             user_id = str(current_user.id)
             ingredients = Ingredient.find_by_recipe_id(recipe.id)
-            user_products = Fridge.get_by_user_id(current_user.id)
 
             recipe_ingredients_names = []
             fridge_products_names = []
@@ -53,16 +100,11 @@ def show_recipe(id):
             for ingredient in ingredients:
                 recipe_ingredients_names.append(Product.find(ingredient.product_id).name)
 
-            for product in user_products:
-                fridge_products_names.append(Product.find(product.product_id).name)
-
             missing_products = []
             missing_products_names = []
 
             for index, ingredient_name in enumerate(recipe_ingredients_names):
                 if ingredient_name in fridge_products_names:
-                    product = Fridge.get_by_product_id(ingredients[index].product_id)
-                    if ingredients[index].quantity > product.quantity:
                         missing_products.append(ingredients[index])
                         missing_products_names.append(ingredient_name)
 
@@ -89,6 +131,63 @@ def show_recipe(id):
 
 
         return redirect(url_for('main.show_recipe', id=recipe.id))
+
+@main.route('/recipes/<int:id>/edit', methods=['GET', 'POST'])
+@login_required
+def edit_recipe(id):
+    recipe = Recipe.find(id)
+    ingredients = Ingredient.find_by_recipe_id(recipe.id)
+    number_of_ingredients = len(ingredients)
+    products = Product.all()
+    if request.method == 'GET':
+        return render_template('edit_recipe.html', recipe=recipe, ingredients=ingredients, number_of_ingredients=number_of_ingredients, Product=Product, products=products)
+    elif request.method == 'POST':
+        if 'file' not in request.files:
+            return redirect(request.url)
+        file = request.files['file']
+        if file.filename == '':
+            filename = recipe.picture
+        if file and Recipe.allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            recipe.remove_picture()
+            file.save(os.path.join(upload_folder, filename))
+
+        recipe.name = request.form['recipe_name']
+        recipe.description = request.form['description']
+        recipe.time = request.form['time']
+        recipe.picture = os.path.join("/static/img/uploads", filename)
+        recipe.save()
+
+        Ingredient.delete_by_recipe(recipe.id)
+
+        ingredients = [
+            None,
+            recipe.id,
+            None,
+            None
+        ]
+
+        i = 1
+        while(request.form.get('id_of_product' + str(i)) is not None):
+            ingredients[2] = request.form.get('id_of_product' + str(i))
+            ingredients[3] = request.form.get('quantity_of_product' + str(i))
+            Ingredient(*ingredients).create()
+            i += 1
+        
+        return redirect(url_for('main.show_recipe', id=recipe.id))
+
+@main.route('/my_recipes/<int:id>/delete', methods=['POST'])
+@login_required
+def delete_recipe(id):
+    recipe = Recipe.find(id)
+    if int(recipe.user_id) == current_user.id:
+        recipe.remove_picture()
+        recipe.delete()
+        Ingredient.delete_by_recipe(recipe.id)
+
+    return redirect(url_for('main.recipes'))
+
+
 
 
 @main.route('/create_product', methods=['GET', 'POST'])
