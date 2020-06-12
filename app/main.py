@@ -5,7 +5,7 @@ from werkzeug.utils import secure_filename
 from werkzeug.security import generate_password_hash
 from .user import User
 from .product import Product
-
+from .recipes import Recipe
 
 main = Blueprint('main', __name__)
 
@@ -33,6 +33,62 @@ def profile():
 @main.route('/products')
 def products():
     return render_template('products.html', products=Product.all())
+
+@main.route('/recipes')
+def recipes():
+    return render_template('recipes.html', recipes=Recipe.all())
+
+@main.route('/recipes/<int:id>', methods=['GET', 'POST'])
+def show_recipe(id):
+    if request.method == 'GET':
+        if current_user.is_authenticated:
+            recipe = Recipe.find(id)
+            user_id = str(current_user.id)
+            ingredients = Ingredient.find_by_recipe_id(recipe.id)
+            user_products = Fridge.get_by_user_id(current_user.id)
+
+            recipe_ingredients_names = []
+            fridge_products_names = []
+
+            for ingredient in ingredients:
+                recipe_ingredients_names.append(Product.find(ingredient.product_id).name)
+
+            for product in user_products:
+                fridge_products_names.append(Product.find(product.product_id).name)
+
+            missing_products = []
+            missing_products_names = []
+
+            for index, ingredient_name in enumerate(recipe_ingredients_names):
+                if ingredient_name in fridge_products_names:
+                    product = Fridge.get_by_product_id(ingredients[index].product_id)
+                    if ingredients[index].quantity > product.quantity:
+                        missing_products.append(ingredients[index])
+                        missing_products_names.append(ingredient_name)
+
+                else:
+                    missing_products.append(ingredients[index])
+                    missing_products_names.append(ingredient_name)
+
+                    
+            return render_template('view_recipe.html', recipe=recipe, user_id=user_id, ingredients=ingredients, product=Product, missing_products=missing_products, missing_products_names=missing_products_names)
+        else:
+            recipe = Recipe.find(id)
+            ingredients = Ingredient.find_by_recipe_id(recipe.id)
+            missing_products_names = []
+            for ingredient in ingredients:
+                missing_products_names.append(Product.find(ingredient.product_id).name)
+            return render_template('view_recipe.html', recipe=recipe, ingredients=ingredients, product=Product, missing_products_names=missing_products_names)
+
+    elif request.method == 'POST':
+        recipe = Recipe.find(id)
+        if current_user.is_authenticated:
+            rate = request.form['rate']
+            recipe.set_rating(rate, current_user.id)
+            recipe.set_overall_rating()
+
+
+        return redirect(url_for('main.show_recipe', id=recipe.id))
 
 
 @main.route('/create_product', methods=['GET', 'POST'])

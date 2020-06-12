@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- The above 4 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+
+    <!-- Title -->
+    <title>Ma what's for dinner?</title>
+
+    <!-- Favicon -->
+    <link rel="icon" href="../static/img/core-img/favicon.ico">
+    <!-- Core Stylesheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+<body>
+    
+
+       <!-- ##### Header Area Start ##### -->
+    <header class="header-area">
+
+        <!-- Navbar Area -->
+        <div class="delicious-main-menu">
+            <div class="classy-nav-container breakpoint-off">
+                <div class="container">
+                    <!-- Menu -->
+                    <nav class="classy-navbar justify-content-between" id="deliciousNav">
+
+                        <!-- Logo -->
+                        <a class="nav-brand logo-ma" href="/"><img src="../static/img/core-img/logo.png" alt=""></a>
+
+
+                        <!-- Menu -->
+                        <div class="classy-menu">
+
+                            <!-- close btn -->
+                            <div class="classycloseIcon">
+                                <div class="cross-wrap"><span class="top"></span><span class="bottom"></span></div>
+                            </div>
+
+                            <!-- Nav Start -->
+                            <div class="classynav">
+                                <ul>
+                                    <li ><a href="/">Home</a></li>
+                                    <li class="active"><a href="/recipes">Recipes</a></li>
+                                    <li><a href="/products">Products</a></li>
+                                    {% if not current_user.is_authenticated %}
+                                        <li><a href="/login">Login</a></li>
+                                        <li><a href="/register">Register</a></li>
+                                    {% else %}
+                                        <li><a href="/create_recipe">Create</a></li>
+                                        <li><a href="/create_product">Create Product</a></li>
+                                        <li><a href="/profile">Profile</a></li>
+                                        <li><a href="/logout">Logout</a></li>
+                                    {% endif %}
+                                </ul>
+                            </div>
+                            <!-- Nav End -->
+                        </div>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- ##### Header Area End ##### -->
+
+    <!-- ##### Breadcumb Area Start ##### -->
+    <div class="breadcumb-area bg-img bg-overlay" style="background-image: url(../static/img/bg-img/breadcumb2.jpg);">
+        <div class="container h-100">
+            <div class="row h-100 align-items-center">
+                <div class="col-12">
+                    <div class="breadcumb-text text-center">
+                        <h2>Recipes</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- ##### Breadcumb Area End ##### -->
+
+    <!-- ##### Blog Area Start ##### -->
+    <div class="blog-area section-padding-80">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 col-lg-8">
+                    <div class="blog-posts-area">
+
+                        <!-- Single Blog Area -->
+                        {% for recipe in recipes %}
+                        <div class="single-blog-area mb-80">
+                            <!-- Thumbnail -->
+                            <div class="blog-thumbnail">
+                                <a href="/recipes/{{ recipe.id }}" ><img style="width: 703px; height: 294px;" src="{{ recipe.picture }}" alt=""></a>
+                                <!-- Post Date -->
+                                <div class="post-date">
+                                    <a><span>{{ '%0.2f'| format(recipe.get_overall_rating()|float) }}<br>⭐ </span></a>
+                                </div>
+                            </div>
+                            <!-- Content -->
+                            <div class="blog-content">
+                                <a href="/recipes/{{ recipe.id }}" class="post-title">{{ recipe.name }}</a>
+                                
+                                </div>
+                                <p>{{ recipe.description }} </p>
+                                
+                            
+                        </div>
+                        {% endfor %}
+                        
+
+                    </div>
+
+                </div>
+
+                <div class="col-12 col-lg-4"  >
+                    <div class="blog-sidebar-area">
+
+                        <!-- Widget -->
+                        <div  class="single-widget mb-80">
+                            <h6></h6>
+
+                            <!-- Form -->
+                            <div class="newsletter-form bg-img bg-overlay" style="background-image: url(../static/img/bg-img/bg1.jpg);">
+                                <form action="" method="post">
+                                    <input type="email" name="email" placeholder="Subscribe to newsletter">
+                                    <a href = "/recipes" type="submit" class="btn delicious-btn w-100">Subscribe</a>
+                                </form>
+                                <p>Subscribe for more news about our project and get notify when a major update will come up.</p>
+                            </div>
+                        </div>
+
+                        <!-- Widget -->
+                        <div  class="single-widget mb-80">
+                            <div class="quote-area text-center">
+                                <span>"</span>
+                                <h4>Nothing is better than going home to family and eating good food and relaxing</h4>
+                                <p>John Smith</p>
+                                <div class="date-comments d-flex justify-content-between">
+                                    <div class="date">May 06, 2020</div>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- ##### Blog Area End ##### -->
+
+    <!-- ##### All Javascript Files ##### -->
+    <!-- jQuery-2.2.4 js -->
+    {% block javascript %}
+        <script src="{{ url_for('static', filename='js/jquery/jquery-2.2.4.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/bootstrap/popper.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/bootstrap/bootstrap.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/plugins/plugins.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/active.js') }}"></script>
+    {% endblock %}
+</body>
+
+</html>
